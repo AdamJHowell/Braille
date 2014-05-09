@@ -1,146 +1,112 @@
-/*braille5.c  14 March 1996  Adam J. Howell
-This program will convert inputed alpha-numeric characters
-into graphical (ASCII) braille characters.
-This version includes ALL printable single cell class
-one braille characters, ecept for contractions.
-New for version .5  Now I've added a case for backspace from
-keyboard entry.*/
+/*
+braille5.c  14 March 1996  Adam J. Howell
+This program will convert inputed alpha-numeric characters into graphical (ASCII) braille characters.
+This version includes ALL printable single cell class one braille characters, except for contractions.
+New for version .5  I have added a case for backspace from keyboard entry.
+*/
 
-#include <process.h>
-#include <string.h>
-#include <stdio.h>
-#include <conio.h>
-#include <fcntl.h>
-//#include <errno.h>	//needed for file error descriptions, not incl yet
-#include <alloc.h>
-#include <ctype.h>
-#include <dir.h>
-#include <io.h>
-
-int	file(void);
-
-char	character(void);
-
-int	braille(char *out, int count, int xpos, int ypos);
-
-int	print_braille(FILE *direction, char *out, int count);
-
-int	print_top_row(FILE *direction, char *ch_to_prn, int count);
-
-int	print_mid_row(FILE *direction, char *ch_to_prn, int count);
-
-int	print_bot_row(FILE *direction, char *ch_to_prn, int count);
+#include <string>
+#include <iostream>
 
 
-/*This first function is not mine, so no help from me.
-All code and comments in it are from Borland C++ 3.1 help files.*/
+using namespace std;
 
-char *current_directory(char *path)
+
+int fileOpen( void );
+char charInput( void );
+int braille( char *out, int count, int xpos, int ypos );
+int print_braille( FILE *direction, char *out, int count );
+int print_top_row( FILE *direction, char *ch_to_prn, int count );
+int print_mid_row( FILE *direction, char *ch_to_prn, int count );
+int print_bot_row( FILE *direction, char *ch_to_prn, int count );
+
+
+int main( void )
 {
-	strcpy(path, "X:\\");      // fill string with form of response: X:\
-	path[0] = 'A' + getdisk();    // replace X with current drive letter
-	getcurdir(0, path+3);  // fill rest of string with current directory
-	return(path);
-}
+	int option = 0;
+	int exit_code = 0;
 
-int	main(void)
-{
-int	option, exit_code;
-
-	clrscr();				//clear screen to start program
-
-	printf("This program will convert input characters\n");
-	printf("into an ASCII version of braille.");
+	printf( "This program will convert input characters\n" );
+	printf( "into an ASCII version of braille." );
 
 	do{
-		printf("\nWould you like to type in (C)haracters, import a (F)ile, or (Q)uit? [C/F/Q] ");
+		cout "\nWould you like to type in (C)haracters, import a (F)ile, or (Q)uit? [C/F/Q] " << endl;
 		option = getch();			//get input one char at a time
-		option = toupper(option);	//convert to upper case to simplify code
-		printf("%c\n", option);		//echo input
+		option = toupper( option );	//convert to upper case to simplify code
+		// Test code.
+		cout << option << endl;		//echo input
 
-		switch (option)
+		switch( option )
 		{
 
 			case 'C' :	//case for keyboard entry
 			{
-				/*charout = */character();
-//				printf("%x hex entered.\n", charout);	//debuging tool
+				charInput();
+				// Test code.
+				//cout << charout << " endtered." << endl;
 				break;
 			}
 
 			case 'F' :	//case for file entry
 			{
-				exit_code = file();
-				if(exit_code == 1)
-					printf("\n");
-//					printf("Would you like to try again? ");
+				exit_code = fileOpen();
+				if( exit_code == 1 )
+				{
+					cout << endl;
+					//cout << "Would you like to try again? ";
 				break;
+				}
 			}
 
 			case 'Q':		//case for quiting
 			{
-				printf("Program terminated.\n");
+				cout << "Program terminated." << endl;
 				break;
 			}
 
 			default:		//if all else fails
 			{
-				printf("I couldn't read your answer, please try again.\n\n");
+				//printf("I couldn't read your answer, please try again.\n\n");
+				cout << "I couldn't read your answer, please try again.\n" << endl;
 			}
 		}
 	} while(option != 'Q');		//the end of a do{} - while() loop
 	return 0;
-}
+} // End main()
 
-int	file(void)
+
+string fileOpen( void )
 {
-int	handle, bytes, badcount;
+	int handle = 0;
+	int bytes = 0;
+	int badcount = 0;
+	string userFile = "";
 
-	FILE *direction;
-	char filename[257], curdir[MAXPATH], *buf, answ;
+	cout << "Please enter the path and file name you want to input." << endl;
+	cin >> inFile;
+	// Clear the input buffer.
+	cin.ignore( IGNORE, '\n' );
+	cout << endl;
+	ifstream inFile( userfile );
 
-//This gives a 4 Kbyte limit to file input.  See also below
-//	buf = malloc(4096);		//init buf for file input
-	memset(buf, 0x00, 4096);	//clear buf to avoid errors
-
-	if (buf == NULL)		//test for malloc() error
+	// Test for file error.
+	if ( dataFile.fail() )
 	{
-		printf("WARNING! - Unable to allocate memory for the input buffer\n");
-		return 1;			//return errorlevel
+		// Announce that we could not open the file.
+		cout << "\nCould not open file \"" << userFile << "\" for reading." << endl;
 	}
-
-	current_directory(curdir);
-	printf("Please enter the path and file name you want to input.\n");
-//Make sure the file exists or we get an error and are kicked out.
-	printf("I've only reserved 4 Kbytes now.\n");
-	printf("The current directory is %s\n", curdir);
-	scanf("%s", filename);
-	handle = open(filename, O_RDONLY); //my code, file is read-only
-
-	if (handle == -1)		//if file error
+	else
 	{
-		perror("Error ");
-		return 1;			//return errorlevel
+		// do things here...
 	}
-
-	if ((bytes = read(handle, buf, 4096)) == -1)	//4 K file limit
-	{
-		printf("Read Failed.\n");
-		return 1;
-//		exit(1);			//this line quits execution
-	}
-
-	else					//if no error
-	{
-		printf("Read: %d bytes read.\n", bytes);
-		printf("They were :\n%s\n\n", buf); //just here to check for errors.
-	}
-	close(handle);			//close file
+	// Close the file handle.
+	inFile.close();
 
 	return 0;
-}
+} // End fileOpen()
 
-char	character(void)
+
+char	charInput(void)
 {
 char	ch;
 
