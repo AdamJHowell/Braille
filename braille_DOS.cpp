@@ -85,15 +85,15 @@ int fileOpen( void )
 	int badcount = 0;
 	string userFile = "";
 
-	cout << "Please enter the path and file name you want to input." << endl;
-	cin >> inFile;
+	cout << "Please enter the name of the file you wish to input." << endl;
+	cin >> userFile;
 	// Clear the input buffer.
 	cin.ignore( IGNORE, '\n' );
 	cout << endl;
 	ifstream inFile( userfile );
 
 	// Test for file error.
-	if ( dataFile.fail() )
+	if ( inFile.fail() )
 	{
 		// Announce that we could not open the file.
 		cout << "\nCould not open file \"" << userFile << "\" for reading." << endl;
