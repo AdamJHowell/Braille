@@ -7,9 +7,14 @@ New for version .5  I have added a case for backspace from keyboard entry.
 
 #include <string>
 #include <iostream>
+#include <fstream>
 
 
 using namespace std;
+
+
+const char DELIMITER = '\n';						// The delimiter that I use with getline.
+const int IGNORE = 4096;							// I use this when clearing the input buffer.
 
 
 int fileOpen( void );
@@ -29,7 +34,7 @@ int main( void )
 	printf( "into an ASCII version of braille." );
 
 	do{
-		cout "\nWould you like to type in (C)haracters, import a (F)ile, or (Q)uit? [C/F/Q] " << endl;
+		cout << "\nWould you like to type in (C)haracters, import a (F)ile, or (Q)uit? [C/F/Q] " << endl;
 		option = getch();			//get input one char at a time
 		option = toupper( option );		//convert to upper case to simplify code
 		// Test code.
@@ -90,7 +95,7 @@ int fileOpen( void )
 	// Clear the input buffer.
 	cin.ignore( IGNORE, '\n' );
 	cout << endl;
-	ifstream inFile( userfile );
+	ifstream inFile( userFile );
 
 	// Test for file error.
 	if ( inFile.fail() )
@@ -119,7 +124,7 @@ int fileOpen( void )
 // Postconditions:	none
 char	charInput(void)
 {
-	char ch = '';
+	char ch = '\n';
 
 	printf("Please enter the characters you would like to convert.\n");
 	printf("Press <Esc> to leave.\n");
@@ -146,12 +151,12 @@ char	charInput(void)
 int	braille(char *out, int count, int xpos, int ypos)
 {
 	//               sp !  "  #  $  %  &  '  (  )  *  +  ,  -  .  / -0  1  2  3  4  5  6  7  8  9 -:  ;  <  =  >  ?  @  A -B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z  [  \  ]  ^  _  `  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  {  |  }  ~ ;
-	char top[284] = "    *     * ** ** **    *   * *   *        *  *-                             -*     *  **  * **  * * -*  ** ** *  ** ** *   *  * *  *  ** ** *  ** ** *   *  * *  *   * ** ** *   * *  **  *  *  *                                                                                * *  **  *";
-	char mid[284] = "   *   *  * *     *     ** **                  - * *  *  ** ** *  ** ** *   *- *  * *  **  *  *      -*      *  * *  ** ** *  **    *      *  * *  ** ** *  **    *  **     *  * *  ** **  *  *                                                                                  *  ** **  *";
-	char bot[284] = "   **    **  *  * ** *  ** **  * **  * **  * * -**    *      *  * *  ** ** * - *  *  * ** *   *      -                           *  *  *  *  *  *  *  *  *  *  ** **  * ** ** **  *  *  *     *                                                                                   *  *  *   ";
+	char top[285] = "    *     * ** ** **    *   * *   *        *  *-                             -*     *  **  * **  * * -*  ** ** *  ** ** *   *  * *  *  ** ** *  ** ** *   *  * *  *   * ** ** *   * *  **  *  *  *                                                                                * *  **  *";
+	char mid[285] = "   *   *  * *     *     ** **                  - * *  *  ** ** *  ** ** *   *- *  * *  **  *  *      -*      *  * *  ** ** *  **    *      *  * *  ** ** *  **    *  **     *  * *  ** **  *  *                                                                                  *  ** **  *";
+	char bot[285] = "   **    **  *  * ** *  ** **  * **  * **  * * -**    *      *  * *  ** ** * - *  *  * ** *   *      -                           *  *  *  *  *  *  *  *  *  *  ** **  * ** ** **  *  *  *     *                                                                                   *  *  *   ";
 
-	int pos = 0
-	int y = 0
+	int pos = 0;
+	int y = 0;
 	int badcount = 0;
 
 	if( out == NULL )		//test for bogus pointer
@@ -228,7 +233,7 @@ int	braille(char *out, int count, int xpos, int ypos)
 		printf( "%c", *out );			// This line is used to echo the chars.
 		gotoxy( xpos, ypos + 1 );		// This simulates a newline, but wont overwrite prev. braille
 
-		if(*out < ' ' || *out > '~')		// Make sure char is in our array
+		if( *out < ' ' || *out > '~' )		// Make sure char is in our array
 		{
 			printf("\n\n\nWARNING! - Character is out of range! : %x hex\n", *out);
 			badcount++;			// Add up unprintable chars.
@@ -293,8 +298,8 @@ Right now, I don't have a case for a carriage return.
 // Preconditions:	none
 // Postconditions:	none
 int	print_braille( FILE *direction, char *out, int count )
-{				//*out is the whole buffer, and count is the # of bytes
-	int badcount = 0
+{			//*out is the whole buffer, and count is the # of bytes
+	int badcount = 0;
 	int total = 0;
 
 
@@ -339,7 +344,7 @@ int	print_braille( FILE *direction, char *out, int count )
 int	print_top_row( FILE *direction, char *ch_to_prn, int count )
 {
 	//               sp !  "  #  $  %  &  '  (  )  *  +  ,  -  .  / -0  1  2  3  4  5  6  7  8  9 -:  ;  <  =  >  ?  @  A -B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z  [  \  ]  ^  _  `  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  {  |  }  ~ ;
-	char top[284] = "    *     * ** ** **    *   * *   *        *  *-                             -*     *  **  * **  * * -*  ** ** *  ** ** *   *  * *  *  ** ** *  ** ** *   *  * *  *   * ** ** *   * *  **  *  *  *                                                                                * *  **  *";
+	char top[285] = "    *     * ** ** **    *   * *   *        *  *-                             -*     *  **  * **  * * -*  ** ** *  ** ** *   *  * *  *  ** ** *  ** ** *   *  * *  *   * ** ** *   * *  **  *  *  *                                                                                * *  **  *";
 	int pos = 0;
 	int total = 0;
 	char *pString;
@@ -384,7 +389,7 @@ int	print_top_row( FILE *direction, char *ch_to_prn, int count )
 int print_mid_row( FILE *direction, char *ch_to_prn, int count )
 {
 	//               sp !  "  #  $  %  &  '  (  )  *  +  ,  -  .  / -0  1  2  3  4  5  6  7  8  9 -:  ;  <  =  >  ?  @  A -B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z  [  \  ]  ^  _  `  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  {  |  }  ~ ;
-	char mid[284] = "   *   *  * *     *     ** **                  - * *  *  ** ** *  ** ** *   *- *  * *  **  *  *      -*      *  * *  ** ** *  **    *      *  * *  ** ** *  **    *  **     *  * *  ** **  *  *                                                                                  *  ** **  *";
+	char mid[285] = "   *   *  * *     *     ** **                  - * *  *  ** ** *  ** ** *   *- *  * *  **  *  *      -*      *  * *  ** ** *  **    *      *  * *  ** ** *  **    *  **     *  * *  ** **  *  *                                                                                  *  ** **  *";
 	int pos, total;
 
 	for( total = 0; total < 26 && total < count; total++, ch_to_prn++ )	//used to stop @ end of row
@@ -414,7 +419,7 @@ int print_mid_row( FILE *direction, char *ch_to_prn, int count )
 int print_bot_row( FILE *direction, char *ch_to_prn, int count )
 {
 	//               sp !  "  #  $  %  &  '  (  )  *  +  ,  -  .  / -0  1  2  3  4  5  6  7  8  9 -:  ;  <  =  >  ?  @  A -B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z  [  \  ]  ^  _  `  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  {  |  }  ~ ;
-	char bot[284] = "   **    **  *  * ** *  ** **  * **  * **  * * -**    *      *  * *  ** ** * - *  *  * ** *   *      -                           *  *  *  *  *  *  *  *  *  *  ** **  * ** ** **  *  *  *     *                                                                                   *  *  *   ";
+	char bot[285] = "   **    **  *  * ** *  ** **  * **  * **  * * -**    *      *  * *  ** ** * - *  *  * ** *   *      -                           *  *  *  *  *  *  *  *  *  *  ** **  * ** ** **  *  *  *     *                                                                                   *  *  *   ";
 	int pos, total;
 
 	for( total = 0; total < 26 && total < count; total++, ch_to_prn++ )	// used to stop @ end of row
