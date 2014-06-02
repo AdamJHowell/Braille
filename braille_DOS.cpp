@@ -5,6 +5,7 @@ This version includes ALL printable single cell class one braille characters, ex
 New for version .5  I have added a case for backspace from keyboard entry.
 */
 
+
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -14,7 +15,7 @@ using namespace std;
 
 
 const char DELIMITER = '\n';						// The delimiter that I use with getline.
-const int IGNORE = 4096;							// I use this when clearing the input buffer.
+const int IGNORE = 4096;						// I use this when clearing the input buffer.
 
 
 int fileOpen( void );
@@ -293,7 +294,7 @@ Right now, I don't have a case for a carriage return.
 
 // Function name:	print_braille()
 // Purpose:		This function will print Braille characters on screen.
-// Parameters:		
+// Parameters:
 // Returns:		An integer indicating number of bad characters.
 // Preconditions:	none
 // Postconditions:	none
@@ -337,7 +338,7 @@ int	print_braille( FILE *direction, char *out, int count )
 
 // Function name:	print_top_row()
 // Purpose:		This function will print the top row of Braille dots on screen.
-// Parameters:		
+// Parameters:
 // Returns:		An integer indicating the number of characters printed.
 // Preconditions:	none
 // Postconditions:	none
@@ -382,7 +383,7 @@ int	print_top_row( FILE *direction, char *ch_to_prn, int count )
 
 // Function name:	print_mid_row()
 // Purpose:		This function will print the middle row of Braille dots on screen.
-// Parameters:		
+// Parameters:
 // Returns:		0.
 // Preconditions:	none
 // Postconditions:	none
@@ -412,7 +413,7 @@ int print_mid_row( FILE *direction, char *ch_to_prn, int count )
 
 // Function name:	print_mid_row()
 // Purpose:		This function will print the middle row of Braille dots on screen.
-// Parameters:		
+// Parameters:
 // Returns:		The number of unprocessed chars
 // Preconditions:	none
 // Postconditions:	none
