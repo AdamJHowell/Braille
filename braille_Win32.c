@@ -37,9 +37,9 @@ All code and comments in it are from Borland C++ 3.1 help files.*/
 
 char *current_directory(char *path)
 {
-	strcpy(path, "X:\\");      // fill string with form of response: X:\
-	path[0] = 'A' + getdisk();    // replace X with current drive letter
-	getcurdir(0, path+3);  // fill rest of string with current directory
+	strcpy(path, "X:\\");		// fill string with form of response: X:\
+	path[0] = 'A' + getdisk();	// replace X with current drive letter
+	getcurdir(0, path+3);		// fill rest of string with current directory
 	return(path);
 }
 
@@ -47,7 +47,7 @@ int	main(void)
 {
 int	option, exit_code;
 
-	clrscr();				//clear screen to start program
+	clrscr();					//clear screen to start program
 
 	printf("This program will convert input characters\n");
 	printf("into an ASCII version of braille.");
@@ -115,7 +115,7 @@ int	handle, bytes, badcount;
 	printf("I've only reserved 4 Kbytes now.\n");
 	printf("The current directory is %s\n", curdir);
 	scanf("%s", filename);
-	handle = open(filename, O_RDONLY); //my code, file is read-only
+	handle = open(filename, O_RDONLY);	//my code, file is read-only
 
 	if (handle == -1)		//if file error
 	{
@@ -147,12 +147,12 @@ char	ch;
 	printf("Please enter the characters you would like to convert.\n");
 	printf("Press <Esc> to leave.\n");
 
-	while((ch = getch()) != 0x1b)	//while ch != <Esc>
+	while((ch = getch()) != 0x1b)		//while ch != <Esc>
 	{
 		braille(&ch, 1, wherex(), wherey());	//process one char (ch) at a time
 	}
 
-	if(ch == 0x1b)		//test for <Esc> 1b is the hex
+	if(ch == 0x1b)					//test for <Esc> 1b is the hex
 	{
 		printf("\n\n\n\n<Esc> entered, exiting...\n\n");	//nelines needed to clear printed braille
 	}
@@ -190,7 +190,7 @@ int	pos = 0, y = 0, badcount = 0;
 			continue;				//skip the rest of the if()
 		}
 
-		if(*out == 0x8)		//backspace
+		if(*out == 0x8)			//backspace
 		{
 			if(xpos < 3)
                	continue;
@@ -218,69 +218,69 @@ int	pos = 0, y = 0, badcount = 0;
 			continue;
 		}
 
-		if(*out == 0x4d)		//right arrow
+		if(*out == 0x4d)	//right arrow
 		{
 			gotoxy(xpos += 3, ypos);
 			continue;
 		}
 
-		if(*out == 0x48)		//up arrow
+		if(*out == 0x48)	//up arrow
 		{
 			gotoxy(xpos, ypos -= 4);
 			continue;
 		}
 
-		if(*out == 0x50)		//down arrow
+		if(*out == 0x50)	//down arrow
 		{
 			gotoxy(xpos, ypos += 4);
 			continue;
 		}
 
 		if(*out >= 'a' && *out <= 'z')	//if(lower case)
-			*out = toupper(*out);	//convert to upper case
+			*out = toupper(*out);		//convert to upper case
 		gotoxy(xpos, ypos);
-		printf("%c", *out);			//this line is used to echo the chars
-		gotoxy(xpos, ypos + 1);		//this simulates a newline, but wont overwrite prev. braille
+		printf("%c", *out);				//this line is used to echo the chars
+		gotoxy(xpos, ypos + 1);			//this simulates a newline, but wont overwrite prev. braille
 
-		if(*out < ' ' || *out > '~')	//make sure char is in our array
+		if(*out < ' ' || *out > '~')		//make sure char is in our array
 		{
 			printf("\n\n\nWARNING! - Character is out of range! : %x hex\n", *out);
-			badcount++;		//add up bogus chars
-			continue;			//if not alpha break out of for() loop
+			badcount++;				//add up bogus chars
+			continue;					//if not alpha break out of for() loop
 		}
 
-		y = (*out - 32) * 3;	//subtract 32 and convert to array position
+		y = (*out - 32) * 3;				//subtract 32 and convert to array position
 
 		for (pos = y; pos < (y + 2); pos++)	//this loop prints top row
 		{
 			printf("%c", top[pos]);
 		}
-		gotoxy(xpos, ypos + 2);	//simulates newline w/o overwriting old braille
+		gotoxy(xpos, ypos + 2);				//simulates newline w/o overwriting old braille
 
 		for (pos = y; pos < (y + 2); pos++)	//this loop prints mid row
 		{
 			printf("%c", mid[pos]);
 		}
-		gotoxy(xpos, ypos + 3);	//simulates a newline
+		gotoxy(xpos, ypos + 3);				//simulates a newline
 
 		for (pos = y; pos < (y + 2); pos++)	//this loop prints bottom row
 		{
 			printf("%c", bot[pos]);
 		}
-		gotoxy(xpos + 3, ypos);	//simulates a newline
+		gotoxy(xpos + 3, ypos);			//simulates a newline
 
-/*		if(count > 1)			//test if it's a file
+/*		if(count > 1)					//test if it's a file
 		{
-			if(xpos < 78)		//if !@ end of row
+			if(xpos < 78)				//if !@ end of row
 			{
-				xpos += 3;	//increment x position
+				xpos += 3;			//increment x position
 			}
-			else				//if @ end or row
+			else						//if @ end or row
 			{
 				printf("Press any key to continue...\n");
-				xpos = 1;		//set x position at start of row
-				ypos += 5;	//increment y position to after the braille just printed
-				getch();		//wait for keypress before continuing
+				xpos = 1;				//set x position at start of row
+				ypos += 5;			//increment y position to after the braille just printed
+				getch();				//wait for keypress before continuing
 			}
 		}
 */
@@ -300,7 +300,7 @@ just for the printer. It's not as easy as it looks.*/
 /*Right now, I don't have a case for a carriage return.*/
 
 int	print_braille(FILE *direction, char *out, int count)
-{				//*out is the whole buffer, and count is the # of bytes
+{						//*out is the whole buffer, and count is the # of bytes
 int	badcount = 0, total;
 
 
@@ -316,7 +316,7 @@ int	badcount = 0, total;
 		printf("Printing... %d characters", total);	//another debugging tool
 	}
 
-	while(count > 0)	//*out == buffer, count == bytes
+	while(count > 0)		//*out == buffer, count == bytes
 	{
 		fprintf(direction, "\n");
 		total = print_top_row(direction, out, count);
@@ -361,7 +361,7 @@ char *pString;
 	{
 		if(*ch_to_prn == 0x0a)
 		{
-			total++;	// Increment this so the calling function knows
+			total++;		// Increment this so the calling function knows
 						// to advance his pointer properly.
 			fprintf(direction, "\n");
 			return total;
