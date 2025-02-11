@@ -1,7 +1,7 @@
 Braille
 =======
 
-A simple braille text editor
+A simple braille text editor that I wrote as a teenager in the 90's
 
 I renamed each file to represent it's target OS and removed the version number from the filename.
 I added some comments to make the project easier to follow.
